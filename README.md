@@ -1,1 +1,1 @@
-# An application for object tracking cameras for industrial enterprises.
+# A project for remote control of a motion detection camera
