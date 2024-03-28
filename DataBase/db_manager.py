@@ -1,4 +1,6 @@
 import sqlite3
+import hashlib
+
 
 conn = sqlite3.connect('data.db')
 c = conn.cursor()
@@ -13,3 +15,17 @@ def login_user(username,password):
     c.execute('SELECT * FROM userstable WHERE username =? AND password = ?',(username,password))
     data = c.fetchall()
     return data
+
+def view_all_users():
+	c.execute('SELECT * FROM userstable')
+	data = c.fetchall()
+	return data
+
+
+def make_hashes(password):
+	return hashlib.sha256(str.encode(password)).hexdigest()
+
+def check_hashes(password,hashed_text):
+	if make_hashes(password) == hashed_text:
+		return hashed_text
+	return False
