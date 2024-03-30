@@ -1,7 +1,11 @@
 import streamlit as st
+from DataBase.db_manager import login_user
 
 
 # Форма для логина
-st.subheader('Вход')
-login_username = st.text_input('Введите имя пользователя')
-login_password = st.text_input('Введите пароль', type='password')
+def login_form():
+    st.subheader('Вход')
+    login_username = st.text_input('Введите имя пользователя')
+    login_password = st.text_input('Введите пароль', type='password')
+    if st.button('Войти'):
+        login_user(login_username, login_password)
