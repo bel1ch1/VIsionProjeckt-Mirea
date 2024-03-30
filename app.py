@@ -1,19 +1,14 @@
-import streamlit as st
-import os
-from DataBase.db_manager import register_user, login_user
+# Рисуем сайт подставляя формы из streamlit_scripts
 
-# Рисуем
+
+import streamlit as st
+from streamlit_scripts.Login import login_form
+from streamlit_scripts.Register import register_form
+
 
 # Форма для регистрации нового пользователя
-st.subheader('Регистрация')
-new_username = st.text_input('Введите новое имя пользователя')
-new_password = st.text_input('Введите новый пароль', type='password')
-if st.button('Зарегистрировать'):
-    register_user(new_username, new_password)
+register_form()
+
 
 # Форма для аутентификации пользователя
-st.subheader('Вход')
-login_username = st.text_input('Введите имя пользователя')
-login_password = st.text_input('Введите пароль', type='password')
-if st.button('Войти'):
-    login_user(login_username, login_password)
+login_form()
