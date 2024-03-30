@@ -1,31 +1,29 @@
 import sqlite3
-import hashlib
+import streamlit as st
+from passlib.hash import pbkdf2_sha256
+
+# Подключение
+conn = sqlite3.connect('data.db', check_same_thread=False)
+cur = conn.cursor()
 
 
-conn = sqlite3.connect('data.db')
-c = conn.cursor()
-def create_usertable():
-    c.execute('CREATE TABLE IF NOT EXISTS userstable(username TEXT,password TEXT)')
+# Создаем таблицу пользователей (если она еще не существует)
+cur.execute('''CREATE TABLE IF NOT EXISTS users (username TEXT, password TEXT)''')
 
-def add_userdata(username, password):
-    c.execute('INSERT INTO userstable(username,password) VALUES (?,?)',(username,password))
+
+# Функция для регистрации нового пользователя
+def register_user(username, password):
+    hashed_password = pbkdf2_sha256.hash(password)
+    cur.execute('''INSERT INTO users (username, password) VALUES (?, ?)''', (username, hashed_password))
     conn.commit()
-
-def login_user(username,password):
-    c.execute('SELECT * FROM userstable WHERE username =? AND password = ?',(username,password))
-    data = c.fetchall()
-    return data
-
-def view_all_users():
-	c.execute('SELECT * FROM userstable')
-	data = c.fetchall()
-	return data
+    st.success("Пользователь зарегистрирован")
 
 
-def make_hashes(password):
-	return hashlib.sha256(str.encode(password)).hexdigest()
-
-def check_hashes(password,hashed_text):
-	if make_hashes(password) == hashed_text:
-		return hashed_text
-	return False
+# Функция для аутентификации пользователя
+def login_user(username, password):
+    cur.execute('''SELECT password FROM users WHERE username = ?''', (username,))
+    result = cur.fetchone()
+    if result and pbkdf2_sha256.verify(password, result[0]):
+        st.success("Успешная аутентификация")
+    else:
+        st.warning("Неверное имя пользователя или пароль")
